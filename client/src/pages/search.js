@@ -19,6 +19,7 @@ function SignUp() {
   const [registerLastName, setRegisterLastName] = useState("");
   const [registerEmail, setRegisterEmail] = useState("");
   function register() {
+      
     API.register(registerUsername, registerPassword);
   }
 
