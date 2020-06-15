@@ -1,88 +1,62 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import {
-  Button,
-  Form,
-  Grid,
-  Header,
-  Message,
-  Segment,
-  Icon,
-  Divider,
-} from "semantic-ui-react";
+import React, { useState, useEffect } from "react";
+import { Row, Col, Container, Jumbotron } from "mdbreact";
 import API from "../utils/API";
 
-function SignUp() {
-  const [registerUsername, setRegisterUsername] = useState("");
-  const [registerPassword, setRegisterPassword] = useState("");
-  const [registerFirstName, setRegisterFirstName] = useState("");
-  const [registerLastName, setRegisterLastName] = useState("");
-  const [registerEmail, setRegisterEmail] = useState("");
-  function register() {
-    API.register(registerUsername, registerPassword);
-  }
+function Saved() {
+  const [Books, setBooks] = useState({});
+
+  useEffect(() => {
+    API.getSavedBooks().then((res) => {
+      setBooks(res.data).catch((err) => console.log(err));
+    });
+  }, []);
 
   return (
-    <Grid textAlign="center" verticalAlign="middle">
-      <Grid.Column style={{ maxWidth: 450 }}>
-        <Divider horizontal hidden />
-        <Header as="h2" textAlign="center">
-          <Icon name="users" size="mini" /> Register for an account
-        </Header>
-        <Form size="large">
-          <Segment>
-            <Form.Input
-              fluid
-              icon="user"
-              iconPosition="left"
-              placeholder="UserName"
-              onChange={(e) => setRegisterUsername(e.target.value)}
-            />
-            <Form.Input
-              fluid
-              icon="lock"
-              iconPosition="left"
-              placeholder="Password"
-              type="password"
-              onChange={(e) => setRegisterPassword(e.target.value)}
-            />
-            <Form.Input
-              fluid
-              icon="address book"
-              iconPosition="left"
-              placeholder="First Name"
-              onChange={(e) => setRegisterFirstName(e.target.value)}
-            />
-            <Form.Input
-              fluid
-              icon="address book"
-              iconPosition="left"
-              placeholder="Last Name"
-              onChange={(e) => setRegisterLastName(e.target.value)}
-            />
-            <Form.Input
-              fluid
-              icon="envelope open"
-              iconPosition="left"
-              placeholder="Email"
-              type="Email"
-              onChange={(e) => setRegisterEmail(e.target.value)}
-            />
-
-            <Button fluid basic size="large" onClick={register}>
-              Sign Up
-            </Button>
-          </Segment>
-        </Form>
-        <Message attached="bottom" style={{ width: "99%", margin: "auto" }}>
-          Already a Memeber?{" "}
-          <Button basic as={Link} to="/login" name="login">
-            Log In
-          </Button>
-        </Message>
-      </Grid.Column>
-    </Grid>
+    <Container>
+      <Row>
+        <Col size="md-12">
+          <Jumbotron>
+            <h1 className="text-center">
+              <strong> Google Books Search</strong>
+            </h1>
+            <h2 className="text-center">Search for and Save Books.</h2>
+          </Jumbotron>
+        </Col>
+      </Row>
+      <Row>
+        <Col size="md-12">
+          <Card title="Saved Books" icon="download">
+            {Books.length ? (
+              <List>
+                {Books.map((book) => (
+                  <Book
+                    key={book._id}
+                    title={book.title}
+                    subtitle={book.subtitle}
+                    link={book.link}
+                    authors={book.authors.join(", ")}
+                    description={book.description}
+                    image={book.image}
+                    Button={() => (
+                      <button
+                        onClick={() => this.handleBookDelete(book._id)}
+                        className="btn btn-danger ml-2"
+                      >
+                        Delete
+                      </button>
+                    )}
+                  />
+                ))}
+              </List>
+            ) : (
+              <h2 className="text-center">No Saved Books</h2>
+            )}
+          </Card>
+        </Col>
+      </Row>
+      <Footer />
+    </Container>
   );
 }
 
-export default SignUp;
+export default Saved;
