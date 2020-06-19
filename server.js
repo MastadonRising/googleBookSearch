@@ -17,7 +17,6 @@ if (process.env.NODE_ENV === "production") {
   app.use(express.static("client/build"));
 }
 app.use(logger("dev"));
-app.use(compression());
 
 app.use(routes);
 // Define API routes here

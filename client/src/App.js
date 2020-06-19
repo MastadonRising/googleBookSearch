@@ -1,8 +1,10 @@
 import React from "react";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
-import Home from "./components/pages/Home";
-import Saved from "./components/pages/Saved";
-import NoMatch from "./components//pages/404";
+import hello from "./";
+import Home from "./pages/home";
+import Saved from "./pages/saved";
+import NoMatch from "./pages/error";
+
 import "./index.css";
 import "./App.css";
 

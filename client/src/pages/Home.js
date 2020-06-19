@@ -1,49 +1,44 @@
 import React from "react";
-import Jumbotron from "../components/Jumbotron";
-import Card from "../components/Card";
-import Form from "../components/Form";
-import Book from "../components/Book";
-import Footer from "../components/Footer";
+import {
+  MDBRow,
+  MDBCol,
+  MDBContainer,
+  MDBJumbotron,
+  MDBFooter,
+  MDBCard,
+  MDBListGroup,
+} from "mdbreact";
+import Book from "../components/book";
+import Form from "../components/form";
 import API from "../utils/API";
-import { Col, Row, Container } from "../components/Grid";
-import { List } from "../components/List";
+import { useState, useContext, useEffect } from "react";
 
 function Home() {
-  state = {
-    books: [],
-    q: "",
-    message: "Search For A Book To Begin!",
-  };
+  const [Title, setTitle] = useState("The Bible");
+  const [Books, setBooks] = useState({});
+  const [Message, setMessage] = useState("Please search for a book");
 
-  handleInputChange = (event) => {
+  function handleInputChange(event) {
     const { name, value } = event.target;
-    this.setState({
-      [name]: value,
-    });
-  };
+    setTitle(value);
+  }
 
-  getBooks = () => {
-    API.getBooks(this.state.q)
-      .then((res) =>
-        this.setState({
-          books: res.data,
-        })
-      )
-      .catch(() =>
-        this.setState({
-          books: [],
-          message: "No New Books Found, Try a Different Query",
-        })
-      );
-  };
+  function getBooks() {
+    API.getBooks(Title)
+      .then((res) => setBooks(res.data))
+      .catch(() => {
+        setBooks({});
+        setMessage("No Books Found, Please try another title");
+      });
+  }
 
-  handleFormSubmit = (event) => {
+  function handleFormSubmit(event) {
     event.preventDefault();
-    this.getBooks();
-  };
+    getBooks();
+  }
 
-  handleBookSave = (id) => {
-    const book = this.state.books.find((book) => book.id === id);
+  function handleBookSave(id) {
+    const book = Books.find((book) => book.id === id);
 
     API.saveBook({
       googleId: book.id,
@@ -54,37 +49,37 @@ function Home() {
       description: book.volumeInfo.description,
       image: book.volumeInfo.imageLinks.thumbnail,
     }).then(() => this.getBooks());
-  };
+  }
 
   return (
-    <Container>
-      <Row>
-        <Col size="md-12">
-          <Jumbotron>
+    <MDBContainer>
+      <MDBRow>
+        <MDBCol sixe="12">
+          <MDBJumbotron>
             <h1 className="text-center">
-              <strong>(React) Google Books Search</strong>
+              <strong> Google Books Search</strong>
             </h1>
             <h2 className="text-center">
               Search for and Save Books of Interest.
             </h2>
-          </Jumbotron>
-        </Col>
-        <Col size="md-12">
-          <Card title="Book Search" icon="far fa-book">
+          </MDBJumbotron>
+        </MDBCol>
+        <MDBCol size="md-12">
+          <MDBCard title="Book Search" icon="far fa-book">
             <Form
-              handleInputChange={this.handleInputChange}
-              handleFormSubmit={this.handleFormSubmit}
-              q={this.state.q}
+              handleInputChange={handleInputChange}
+              handleFormSubmit={handleFormSubmit}
+              Title={Title}
             />
-          </Card>
-        </Col>
-      </Row>
-      <Row>
-        <Col size="md-12">
-          <Card title="Results">
-            {this.state.books.length ? (
-              <List>
-                {this.state.books.map((book) => (
+          </MDBCard>
+        </MDBCol>
+      </MDBRow>
+      <MDBRow>
+        <MDBCol size="md-12">
+          <MDBCard title="Results">
+            {Books.length ? (
+              <MDBListGroup>
+                {Books.map((book) => (
                   <Book
                     key={book.id}
                     title={book.volumeInfo.title}
@@ -95,7 +90,7 @@ function Home() {
                     image={book.volumeInfo.imageLinks.thumbnail}
                     Button={() => (
                       <button
-                        onClick={() => this.handleBookSave(book.id)}
+                        onClick={() => handleBookSave(book.id)}
                         className="btn btn-primary ml-2"
                       >
                         Save
@@ -103,15 +98,15 @@ function Home() {
                     )}
                   />
                 ))}
-              </List>
+              </MDBListGroup>
             ) : (
-              <h2 className="text-center">{this.state.message}</h2>
+              <h2 className="text-center">{Message}</h2>
             )}
-          </Card>
-        </Col>
-      </Row>
-      <Footer />
-    </Container>
+          </MDBCard>
+        </MDBCol>
+      </MDBRow>
+      <MDBFooter />
+    </MDBContainer>
   );
 }
 
